@@ -1,0 +1,15 @@
+[package]
+name = "js2wasm-engine"
+version = "0.1.0"
+authors = ["carp-sushi <105142707+carp-sushi@users.noreply.github.com>"]
+edition = "2018"
+
+[[bin]]
+name = "js2wasm_engine"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1.0"
+quickjs-wasm-rs = { version = "0.1.2", features = ["json"] }
+wee_alloc = "0.4.5"
+once_cell = "1.4.0"
