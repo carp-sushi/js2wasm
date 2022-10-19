@@ -10,7 +10,7 @@ fi
 PATH_TO_SDK="wasi-sdk"
 if [[ ! -d $PATH_TO_SDK ]]; then
     TMPGZ=$(mktemp)
-    VERSION_MAJOR="14"
+    VERSION_MAJOR="16"
     VERSION_MINOR="0"
     if [[ "$(uname -s)" == "Darwin" ]]; then
         curl --fail --location --silent https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${VERSION_MAJOR}/wasi-sdk-${VERSION_MAJOR}.${VERSION_MINOR}-macos.tar.gz --output $TMPGZ

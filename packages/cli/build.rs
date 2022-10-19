@@ -20,7 +20,7 @@ fn stub_engine_for_clippy() {
     }
 }
 
-// Copy the engine binary build from the `core` crate
+// Copy the binary build wasm file from the `engine` crate
 fn copy_engine_binary() {
     let override_engine_path = env::var("JS2WASM_ENGINE_PATH");
     let is_override = override_engine_path.is_ok();
