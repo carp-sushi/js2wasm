@@ -4,13 +4,25 @@ JavaScript to WebAssembly toolchain
 
 ## Build
 
-From the root of the `js2wasm` project, download the wasi sdk:
+Ensure Rust stable is installed.
+
+```shell
+rustup install stable && rustup default stable
+```
+
+Add the wasm32-wasi target.
+
+```shell
+rustup target add wasm32-wasi
+```
+
+From the root of the `js2wasm` project, download the wasi sdk.
 
 ```shell
 ./download-wasi-sdk.sh
 ```
 
-Set the QuickJS Wasi SDK environment variable:
+Set the QuickJS Wasi SDK environment variable.
 
 ```shell
 export QUICKJS_WASM_SYS_WASI_SDK_PATH=$(pwd)/wasi-sdk
@@ -22,7 +34,7 @@ Alternatively, `direnv` can be used to set the above automatically. See the .env
 direnv allow .
 ```
 
-Now, invoke the default make target
+Invoke the default make target.
 
 ```shell
 make
@@ -54,6 +66,7 @@ See the `wasm` dir in the [fib-purs](https://github.com/carp-sushi/fib-purs) rep
 
 ## TODO
 
+- Ensure build works on OSX.
 - Add config options for optimization of code size / speed.
 
 ## Acknowledgements
@@ -62,6 +75,6 @@ The code in the repo was adaptated from [Javy](https://github.com/Shopify/javy) 
 changes:
 
 - Change naming, make company agnostic (i.e. Shopify -> Cmd).
-- Remove Wasm optimization (can be done later with `wasm-opt`)
-- Reference quickjs-wasm-rs as a lib from crates.io
+- Remove hard-coded Wasm optimization (can be done later with `wasm-opt`).
+- Reference quickjs-wasm-rs as a lib from crates.io.
 
