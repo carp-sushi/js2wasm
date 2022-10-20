@@ -2,9 +2,58 @@
 
 JavaScript to WebAssembly toolchain
 
+## Build
+
+From the root of the `js2wasm` project, download the wasi sdk:
+
+```shell
+./download-wasi-sdk.sh
+```
+
+Set the QuickJS Wasi SDK environment variable:
+
+```shell
+export QUICKJS_WASM_SYS_WASI_SDK_PATH=$(pwd)/wasi-sdk
+```
+
+Alternatively, `direnv` can be used to set the above automatically. See the .envrc file.
+
+```shell
+direnv allow .
+```
+
+Now, invoke the default make target
+
+```shell
+make
+```
+
+Note: this project has only been built on Ubuntu LTS 22.04 w/ the clang development
+package installed.
+
+## Usage
+
+```shell
+target/release/js2wasm
+error: The following required arguments were not provided:
+    <input>
+
+USAGE:
+  js2wasm <input> -o <output>
+```
+
+Where `<input>` is a JavaScript command file and `<output>` is a Wasm file name. For example:
+
+```shell
+js2wasm index.js -o index.wasm
+```
+
+## Example
+
+See the `wasm` dir in the [fib-purs](https://github.com/carp-sushi/fib-purs) repo.
+
 ## TODO
 
-- Add build, usage instructions.
 - Add config options for optimization of code size / speed.
 
 ## Acknowledgements
