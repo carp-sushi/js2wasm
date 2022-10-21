@@ -16,7 +16,7 @@ impl<'a> Writer<'a> {
     }
 
     pub fn write_wasm(self, dest: impl AsRef<Path>) -> Result<(), Error> {
-        let mut wasm = Wizer::new()
+        let wasm = Wizer::new()
             .allow_wasi(true)?
             .inherit_stdio(true)
             .run(self.wasm)?;
