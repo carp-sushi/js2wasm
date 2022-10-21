@@ -2,6 +2,10 @@
 
 JavaScript to WebAssembly toolchain
 
+## Purpose
+
+The intent for this tool is to provide a means to write PureScript, compile to JavaScript, and package as a self-contained Wasi command.
+
 ## Build
 
 Ensure Rust stable is installed.
