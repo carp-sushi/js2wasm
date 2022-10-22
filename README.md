@@ -66,7 +66,7 @@ js2wasm index.js -o index.wasm
 
 ## Example
 
-See the `wasm` dir in the [fib-purs](https://github.com/carp-sushi/fib-purs) repo.
+See the `example` dir under the root of this project.
 
 ## TODO
 
