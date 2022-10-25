@@ -15,9 +15,9 @@ optimize-sm:
 	wasm-opt -Oz --strip -o cmd-sm.wasm index.wasm
 
 run:
-	echo '{"n": 10, "op": "fib"}' | wasmtime cmd.wasm
+	echo '{"n": 10, "op": "fib"}' | wasmtime cmd.wasm | jq
 	@echo ""
-	echo '{"n": 10, "op": "fac"}' | wasmtime cmd.wasm
+	echo '{"n": 10, "op": "fac"}' | wasmtime cmd.wasm | jq
 	@echo ""
 
 clean:

@@ -26,44 +26,38 @@ var logShow = function(dictShow) {
   };
 };
 
-// output/Data.Boolean/index.js
-var otherwise = true;
-
 // output/Fac/index.js
-var fac$prime = function($copy_n) {
-  return function($copy_acc) {
-    var $tco_var_n = $copy_n;
-    var $tco_done = false;
-    var $tco_result;
-    function $tco_loop(n, acc) {
-      var $4 = n === 0;
-      if ($4) {
-        $tco_done = true;
-        return acc;
+var fac = function(n) {
+  var fac$prime = function($copy_n1) {
+    return function($copy_acc) {
+      var $tco_var_n1 = $copy_n1;
+      var $tco_done = false;
+      var $tco_result;
+      function $tco_loop(n1, acc) {
+        var $4 = n1 === 0;
+        if ($4) {
+          $tco_done = true;
+          return acc;
+        }
+        ;
+        $tco_var_n1 = n1 - 1 | 0;
+        $copy_acc = acc * n1 | 0;
+        return;
       }
       ;
-      $tco_var_n = n - 1 | 0;
-      $copy_acc = acc * n | 0;
-      return;
-    }
-    ;
-    while (!$tco_done) {
-      $tco_result = $tco_loop($tco_var_n, $copy_acc);
-    }
-    ;
-    return $tco_result;
+      while (!$tco_done) {
+        $tco_result = $tco_loop($tco_var_n1, $copy_acc);
+      }
+      ;
+      return $tco_result;
+    };
   };
-};
-var fac = function(n) {
-  if (n < 0) {
+  var $5 = n < 0;
+  if ($5) {
     return 0;
   }
   ;
-  if (otherwise) {
-    return fac$prime(n)(1);
-  }
-  ;
-  throw new Error("Failed pattern match at Fac (line 6, column 1 - line 6, column 18): " + [n.constructor.name]);
+  return fac$prime(n)(1);
 };
 
 // output/Data.Bounded/foreign.js
@@ -104,15 +98,12 @@ var fib$prime = function(n) {
   return loop(n)(0)(1);
 };
 var fib = function(n) {
-  if (n <= 0) {
+  var $11 = n <= 0;
+  if ($11) {
     return 0;
   }
   ;
-  if (otherwise) {
-    return fib$prime(n);
-  }
-  ;
-  throw new Error("Failed pattern match at Fib (line 7, column 1 - line 7, column 18): " + [n.constructor.name]);
+  return fib$prime(n);
 };
 
 // output/Main/index.js
@@ -130,11 +121,22 @@ var main = function __do() {
 Cmd = {
   execute: function(msg) {
 	if (msg.op === 'fac') {
-	  return { 'fac': fac(msg.n|0) };
+	  return {
+		'input': msg,
+		'status': 'success',
+		'result': fac(msg.n|0)
+	  };
 	}
 	if (msg.op === 'fib') {
-	  return { 'fib': fib(msg.n|0) };
+	  return {
+		'input': msg,
+		'status': 'success',
+		'result': fib(msg.n|0)
+	  };
 	}
-	return {};
+	return {
+	  'status': 'error',
+	  'error': 'invalid operation'
+	};
   }
 };
