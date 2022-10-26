@@ -165,22 +165,15 @@ var run = function(op) {
     return Nothing.value;
   };
 };
-var main = function __do() {
-  log("The 10th fib number is: ")();
-  logShow2(run("fib")(10))();
-  log("The value of 10! is: ")();
-  return logShow2(run("fac")(10))();
-};
 
 // Code above here is build output from a PureScript project.
 
 // Wire this up as a js2wasm command.
 Cmd = {
-  execute: function(msg) {
-	result = run(msg.op)(msg.n|0);
+  execute: function(input) {
 	return {
-	  'input': msg,
-	  'result': result,
+	  'input': input,
+	  'output': run(input.op)(input.n|0),
 	};
   }
 };
