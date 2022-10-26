@@ -1,3 +1,12 @@
+// output/Data.Boolean/index.js
+var otherwise = true;
+
+// output/Data.Bounded/foreign.js
+var topChar = String.fromCharCode(65535);
+var bottomChar = String.fromCharCode(0);
+var topNumber = Number.POSITIVE_INFINITY;
+var bottomNumber = Number.NEGATIVE_INFINITY;
+
 // output/Data.Show/foreign.js
 var showIntImpl = function(n) {
   return n.toString();
@@ -9,6 +18,41 @@ var showInt = {
 };
 var show = function(dict) {
   return dict.show;
+};
+
+// output/Data.Maybe/index.js
+var Nothing = /* @__PURE__ */ function() {
+  function Nothing2() {
+  }
+  ;
+  Nothing2.value = new Nothing2();
+  return Nothing2;
+}();
+var Just = /* @__PURE__ */ function() {
+  function Just2(value0) {
+    this.value0 = value0;
+  }
+  ;
+  Just2.create = function(value0) {
+    return new Just2(value0);
+  };
+  return Just2;
+}();
+var showMaybe = function(dictShow) {
+  var show2 = show(dictShow);
+  return {
+    show: function(v) {
+      if (v instanceof Just) {
+        return "(Just " + (show2(v.value0) + ")");
+      }
+      ;
+      if (v instanceof Nothing) {
+        return "Nothing";
+      }
+      ;
+      throw new Error("Failed pattern match at Data.Maybe (line 223, column 1 - line 225, column 28): " + [v.constructor.name]);
+    }
+  };
 };
 
 // output/Effect.Console/foreign.js
@@ -27,44 +71,41 @@ var logShow = function(dictShow) {
 };
 
 // output/Fac/index.js
-var fac = function(n) {
-  var fac$prime = function($copy_n1) {
-    return function($copy_acc) {
-      var $tco_var_n1 = $copy_n1;
-      var $tco_done = false;
-      var $tco_result;
-      function $tco_loop(n1, acc) {
-        var $4 = n1 === 0;
-        if ($4) {
-          $tco_done = true;
-          return acc;
-        }
-        ;
-        $tco_var_n1 = n1 - 1 | 0;
-        $copy_acc = acc * n1 | 0;
-        return;
+var fac$prime = function($copy_n) {
+  return function($copy_acc) {
+    var $tco_var_n = $copy_n;
+    var $tco_done = false;
+    var $tco_result;
+    function $tco_loop(n, acc) {
+      var $4 = n === 0;
+      if ($4) {
+        $tco_done = true;
+        return acc;
       }
       ;
-      while (!$tco_done) {
-        $tco_result = $tco_loop($tco_var_n1, $copy_acc);
-      }
-      ;
-      return $tco_result;
-    };
+      $tco_var_n = n - 1 | 0;
+      $copy_acc = acc * n | 0;
+      return;
+    }
+    ;
+    while (!$tco_done) {
+      $tco_result = $tco_loop($tco_var_n, $copy_acc);
+    }
+    ;
+    return $tco_result;
   };
-  var $5 = n < 0;
-  if ($5) {
+};
+var fac = function(n) {
+  if (n < 0) {
     return 0;
   }
   ;
-  return fac$prime(n)(1);
+  if (otherwise) {
+    return fac$prime(n)(1);
+  }
+  ;
+  throw new Error("Failed pattern match at Fac (line 6, column 1 - line 6, column 18): " + [n.constructor.name]);
 };
-
-// output/Data.Bounded/foreign.js
-var topChar = String.fromCharCode(65535);
-var bottomChar = String.fromCharCode(0);
-var topNumber = Number.POSITIVE_INFINITY;
-var bottomNumber = Number.NEGATIVE_INFINITY;
 
 // output/Fib/index.js
 var fib$prime = function(n) {
@@ -98,21 +139,37 @@ var fib$prime = function(n) {
   return loop(n)(0)(1);
 };
 var fib = function(n) {
-  var $11 = n <= 0;
-  if ($11) {
+  if (n <= 0) {
     return 0;
   }
   ;
-  return fib$prime(n);
+  if (otherwise) {
+    return fib$prime(n);
+  }
+  ;
+  throw new Error("Failed pattern match at Fib (line 7, column 1 - line 7, column 18): " + [n.constructor.name]);
 };
 
 // output/Main/index.js
-var logShow2 = /* @__PURE__ */ logShow(showInt);
+var logShow2 = /* @__PURE__ */ logShow(/* @__PURE__ */ showMaybe(showInt));
+var run = function(op) {
+  return function(n) {
+    if (op === "fac") {
+      return new Just(fac(n));
+    }
+    ;
+    if (op === "fib") {
+      return new Just(fib(n));
+    }
+    ;
+    return Nothing.value;
+  };
+};
 var main = function __do() {
   log("The 10th fib number is: ")();
-  logShow2(fib(10))();
+  logShow2(run("fib")(10))();
   log("The value of 10! is: ")();
-  return logShow2(fac(10))();
+  return logShow2(run("fac")(10))();
 };
 
 // Code above here is build output from a PureScript project.
@@ -120,23 +177,10 @@ var main = function __do() {
 // Wire this up as a js2wasm command.
 Cmd = {
   execute: function(msg) {
-	if (msg.op === 'fac') {
-	  return {
-		'input': msg,
-		'status': 'success',
-		'result': fac(msg.n|0)
-	  };
-	}
-	if (msg.op === 'fib') {
-	  return {
-		'input': msg,
-		'status': 'success',
-		'result': fib(msg.n|0)
-	  };
-	}
+	result = run(msg.op)(msg.n|0);
 	return {
-	  'status': 'error',
-	  'error': 'invalid operation'
+	  'input': msg,
+	  'result': result,
 	};
   }
 };
