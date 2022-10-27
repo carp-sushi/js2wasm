@@ -1,6 +1,27 @@
 // output/Data.Boolean/index.js
 var otherwise = true;
 
+// output/Type.Proxy/index.js
+var $$Proxy = /* @__PURE__ */ function() {
+  function $$Proxy2() {
+  }
+  ;
+  $$Proxy2.value = new $$Proxy2();
+  return $$Proxy2;
+}();
+
+// output/Data.Symbol/index.js
+var reflectSymbol = function(dict) {
+  return dict.reflectSymbol;
+};
+
+// output/Record.Unsafe/foreign.js
+var unsafeGet = function(label) {
+  return function(rec) {
+    return rec[label];
+  };
+};
+
 // output/Data.Bounded/foreign.js
 var topChar = String.fromCharCode(65535);
 var bottomChar = String.fromCharCode(0);
@@ -11,13 +32,95 @@ var bottomNumber = Number.NEGATIVE_INFINITY;
 var showIntImpl = function(n) {
   return n.toString();
 };
+var showStringImpl = function(s) {
+  var l = s.length;
+  return '"' + s.replace(
+    /[\0-\x1F\x7F"\\]/g,
+    function(c, i) {
+      switch (c) {
+        case '"':
+        case "\\":
+          return "\\" + c;
+        case "\x07":
+          return "\\a";
+        case "\b":
+          return "\\b";
+        case "\f":
+          return "\\f";
+        case "\n":
+          return "\\n";
+        case "\r":
+          return "\\r";
+        case "	":
+          return "\\t";
+        case "\v":
+          return "\\v";
+      }
+      var k = i + 1;
+      var empty = k < l && s[k] >= "0" && s[k] <= "9" ? "\\&" : "";
+      return "\\" + c.charCodeAt(0).toString(10) + empty;
+    }
+  ) + '"';
+};
 
 // output/Data.Show/index.js
+var showString = {
+  show: showStringImpl
+};
+var showRecordFields = function(dict) {
+  return dict.showRecordFields;
+};
+var showRecord = function() {
+  return function() {
+    return function(dictShowRecordFields) {
+      var showRecordFields1 = showRecordFields(dictShowRecordFields);
+      return {
+        show: function(record) {
+          return "{" + (showRecordFields1($$Proxy.value)(record) + "}");
+        }
+      };
+    };
+  };
+};
 var showInt = {
   show: showIntImpl
 };
 var show = function(dict) {
   return dict.show;
+};
+var showRecordFieldsCons = function(dictIsSymbol) {
+  var reflectSymbol2 = reflectSymbol(dictIsSymbol);
+  return function(dictShowRecordFields) {
+    var showRecordFields1 = showRecordFields(dictShowRecordFields);
+    return function(dictShow) {
+      var show1 = show(dictShow);
+      return {
+        showRecordFields: function(v) {
+          return function(record) {
+            var tail = showRecordFields1($$Proxy.value)(record);
+            var key = reflectSymbol2($$Proxy.value);
+            var focus = unsafeGet(key)(record);
+            return " " + (key + (": " + (show1(focus) + ("," + tail))));
+          };
+        }
+      };
+    };
+  };
+};
+var showRecordFieldsConsNil = function(dictIsSymbol) {
+  var reflectSymbol2 = reflectSymbol(dictIsSymbol);
+  return function(dictShow) {
+    var show1 = show(dictShow);
+    return {
+      showRecordFields: function(v) {
+        return function(record) {
+          var key = reflectSymbol2($$Proxy.value);
+          var focus = unsafeGet(key)(record);
+          return " " + (key + (": " + (show1(focus) + " ")));
+        };
+      }
+    };
+  };
 };
 
 // output/Data.Maybe/index.js
@@ -151,18 +254,42 @@ var fib = function(n) {
 };
 
 // output/Main/index.js
-var logShow2 = /* @__PURE__ */ logShow(/* @__PURE__ */ showMaybe(showInt));
-var run = function(op) {
-  return function(n) {
-    if (op === "fac") {
-      return new Just(fac(n));
-    }
-    ;
-    if (op === "fib") {
-      return new Just(fib(n));
-    }
-    ;
-    return Nothing.value;
+var showRecord2 = /* @__PURE__ */ showRecord()();
+var logShow2 = /* @__PURE__ */ logShow(/* @__PURE__ */ showRecord2(/* @__PURE__ */ showRecordFieldsCons({
+  reflectSymbol: function() {
+    return "input";
+  }
+})(/* @__PURE__ */ showRecordFieldsConsNil({
+  reflectSymbol: function() {
+    return "output";
+  }
+})(/* @__PURE__ */ showMaybe(showInt)))(/* @__PURE__ */ showRecord2(/* @__PURE__ */ showRecordFieldsCons({
+  reflectSymbol: function() {
+    return "n";
+  }
+})(/* @__PURE__ */ showRecordFieldsConsNil({
+  reflectSymbol: function() {
+    return "op";
+  }
+})(showString))(showInt)))));
+var execute = function(i) {
+  if (i.op === "fac") {
+    return {
+      input: i,
+      output: new Just(fac(i.n))
+    };
+  }
+  ;
+  if (i.op === "fib") {
+    return {
+      input: i,
+      output: new Just(fib(i.n))
+    };
+  }
+  ;
+  return {
+    input: i,
+    output: Nothing.value
   };
 };
 
@@ -170,10 +297,5 @@ var run = function(op) {
 
 // Wire this up as a js2wasm command.
 Cmd = {
-  execute: function(input) {
-	return {
-	  'input': input,
-	  'output': run(input.op)(input.n|0),
-	};
-  }
+  execute: execute
 };
